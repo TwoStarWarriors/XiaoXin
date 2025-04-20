@@ -11,9 +11,9 @@ import os
 from scipy.stats import zscore
 import pandas as pd
 
-file_floder="D:/1_读研/3_论文专利/19_聚类与信息熵联合/信息熵变化/009e_9500-10000"
-out_floder="D:/1_读研/3_论文专利/19_聚类与信息熵联合/信息熵变化/009e_9500-10000"
-ac_floder="D:/1_读研/3_论文专利/19_聚类与信息熵联合/信息熵变化/009e_9500-10000"
+file_floder="C:\Users\86158\Desktop\xinnengan\data"
+out_floder="C:\Users\86158\Desktop\xinnengan\mose"
+ac_floder="C:\Users\86158\Desktop\xinnengan\ac"
 
 for file_name in os.listdir(file_floder):
     if file_name.endswith(".csv"):
