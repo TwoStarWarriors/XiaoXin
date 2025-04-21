@@ -11,10 +11,14 @@ import os
 from scipy.stats import zscore
 import pandas as pd
 
-file_root_floder="C:\Users\86158\Desktop\xinnengan\data"
-out_floder="C:\Users\86158\Desktop\xinnengan\mose"
-ac_floder="C:\Users\86158\Desktop\xinnengan\ac"
-col_name=[f"CAN1_BMS_V{i+1}(V)"for i in range(16)]
+file_root_floder="C:\\Users\\86158\\Desktop\\xinnengan\\data"
+out_floder="C:\\Users\\86158\\Desktop\\xinnengan\\mose"
+ac_floder="C:\\Users\\86158\\Desktop\\xinnengan\\ac"
+#col_name=[f"CAN1_BMS_V{i+1}(V)"for i in range(16)]
+col_name=['CAN1_BMS_V1', 'CAN1_BMS_V2', 'CAN1_BMS_V3', 'CAN1_BMS_V4',
+    'CAN1_BMS_V5', 'CAN1_BMS_V6', 'CAN1_BMS_V7', 'CAN1_BMS_V8',
+    'CAN1_BMS_V9', 'CAN1_BMS_V10', 'CAN1_BMS_V11', 'CAN1_BMS_V12',
+    'CAN1_BMS_V13', 'CAN1_BMS_V14', 'CAN1_BMS_V15', 'CAN1_BMS_V16']
 
 for file_name in os.listdir(file_root_floder):
     if file_name.endswith(".csv"):
