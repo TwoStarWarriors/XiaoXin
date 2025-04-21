@@ -78,7 +78,7 @@ for file_name in os.listdir(file_root_floder):
     df_mose_ac_abs = df_mose.apply(zscore,axis=1).abs()
     df_mose_ac_abs.to_csv(ac_path,index= False,header = False)
 
-#%%开始画图并结束大循环
+#开始画图并结束大循环
 fig,axes =plt.subplots(nrows=1,ncols=3,figsize=(63,10))
 # #绘制电压图
 # axes[0].set_title(f"{file_name_mark}_电压信号_极差{range_max_mark}v",fontsize=35)
