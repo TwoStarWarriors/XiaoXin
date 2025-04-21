@@ -26,8 +26,8 @@ for file_name in os.listdir(file_root_floder):
         file_path = os.path.join(file_root_floder,file_name)
         df = pd.read_csv(file_path)
     elif file_name.endswith(".xlsx"):
-            file_path = os.path.join(file_root_floder,file_name)
-            df = pd.read_excel(file_path)
+        file_path = os.path.join(file_root_floder,file_name)
+        df = pd.read_excel(file_path)
     else:
         continue
     df = df[col_name]
