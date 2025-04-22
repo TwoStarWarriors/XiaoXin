@@ -5,21 +5,23 @@ Created on 4.22 11:38 2025
 @author: shuyuandeng
 """
 #依赖库导入
-import numpy as np                                                                        #数据处理
+import numpy as np                                                                        # 数据处理
 import pandas as pd
-import math                                                                               #数学计算
-import os                                                                                 #文件路径操作
-from scipy.stats import zscore                                                            #标准化
+import math                                                                               # 数学计算
+import os                                                                                 # 文件路径操作
+from scipy.stats import zscore                                                            # 标准化
+import matplotlib.pyplot as plt                                                           # 新增画图库
 # 设置文件路径
 file_root_floder="C:\\Users\\86158\\Desktop\\xinnengan\\data"
 out_floder="C:\\Users\\86158\\Desktop\\xinnengan\\mose"
 ac_floder="C:\\Users\\86158\\Desktop\\xinnengan\\ac"
+plots_folder = "C:\\Users\\86158\\Desktop\\xinnengan\\plots"  
 # 定义电芯电压列名称
-#col_name=[f"CAN1_BMS_V{i+1}(V)"for i in range(16)]
-col_name=['CAN1_BMS_V1', 'CAN1_BMS_V2', 'CAN1_BMS_V3', 'CAN1_BMS_V4',
-    'CAN1_BMS_V5', 'CAN1_BMS_V6', 'CAN1_BMS_V7', 'CAN1_BMS_V8',
-    'CAN1_BMS_V9', 'CAN1_BMS_V10', 'CAN1_BMS_V11', 'CAN1_BMS_V12',
-    'CAN1_BMS_V13', 'CAN1_BMS_V14', 'CAN1_BMS_V15', 'CAN1_BMS_V16']
+col_name=[f"CAN1_BMS_V{i+1}"for i in range(16)]
+# col_name=['CAN1_BMS_V1', 'CAN1_BMS_V2', 'CAN1_BMS_V3', 'CAN1_BMS_V4',
+#     'CAN1_BMS_V5', 'CAN1_BMS_V6', 'CAN1_BMS_V7', 'CAN1_BMS_V8',
+#     'CAN1_BMS_V9', 'CAN1_BMS_V10', 'CAN1_BMS_V11', 'CAN1_BMS_V12',
+#     'CAN1_BMS_V13', 'CAN1_BMS_V14', 'CAN1_BMS_V15', 'CAN1_BMS_V16']
 
 #遍历处理每个文件（支持CSV和Excel）
 for file_name in os.listdir(file_root_floder):
@@ -61,6 +63,24 @@ for file_name in os.listdir(file_root_floder):
         # 标准化处理生成ac文件
         df_mose_ac_abs = df_mose.apply(zscore, axis=1).abs()                             # 按行标准化 + 取绝对值
         df_mose_ac_abs.to_csv(ac_path, index=False, header=False)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # #开始画图并结束大循环
 # fig,axes =plt.subplots(nrows=1,ncols=3,figsize=(63,10))
