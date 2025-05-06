@@ -14,7 +14,7 @@ import pandas as pd
 file_root_floder="C:\\Users\\86158\\Desktop\\xinnengan\\data"
 out_floder="C:\\Users\\86158\\Desktop\\xinnengan\\mose"
 ac_floder="C:\\Users\\86158\\Desktop\\xinnengan\\ac"
-#col_name=[f"CAN1_BMS_V{i+1}(V)"for i in range(16)]
+#col_name=[f"CAN1_BMS_V{i+1}"for i in range(16)]
 col_name=['CAN1_BMS_V1', 'CAN1_BMS_V2', 'CAN1_BMS_V3', 'CAN1_BMS_V4',
     'CAN1_BMS_V5', 'CAN1_BMS_V6', 'CAN1_BMS_V7', 'CAN1_BMS_V8',
     'CAN1_BMS_V9', 'CAN1_BMS_V10', 'CAN1_BMS_V11', 'CAN1_BMS_V12',
