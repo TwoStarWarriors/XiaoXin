@@ -11,9 +11,9 @@ import os
 from scipy.stats import zscore
 import pandas as pd
 
-file_root_floder="C:\\Users\\86158\\Desktop\\xinnengan\\data"
-out_floder="C:\\Users\\86158\\Desktop\\xinnengan\\mose"
-ac_floder="C:\\Users\\86158\\Desktop\\xinnengan\\ac"
+file_root_floder="C:/Users/86158/Desktop/Demo_CppCallPython-l2/x64/Release/processData/data_input"
+out_floder="C:/Users/86158/Desktop/Demo_CppCallPython-l2/x64/Release/processData/mose_output"
+ac_floder="C:/Users/86158/Desktop/Demo_CppCallPython-l2/x64/Release/processData/ac_output"
 #col_name=[f"CAN1_BMS_V{i+1}"for i in range(16)]
 col_name=['CAN1_BMS_V1', 'CAN1_BMS_V2', 'CAN1_BMS_V3', 'CAN1_BMS_V4',
     'CAN1_BMS_V5', 'CAN1_BMS_V6', 'CAN1_BMS_V7', 'CAN1_BMS_V8',
