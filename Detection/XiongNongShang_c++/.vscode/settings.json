@@ -1,0 +1,10 @@
+{
+    "cmake.configureSettings": {
+        "CMAKE_TOOLCHAIN_FILE": "D:/LenovoSoftstore/Install/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_TARGET_TRIPLET": "x64-windows"
+    },
+    "cmake.generator": "Visual Studio 17 2022",
+    "cmake.buildDirectory": "${workspaceFolder}/build",
+    "cmake.parallelJobs": 4,
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
+}
