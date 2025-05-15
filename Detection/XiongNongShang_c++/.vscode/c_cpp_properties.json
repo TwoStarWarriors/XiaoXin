@@ -1,0 +1,26 @@
+{
+    "configurations": [
+        {
+            "name": "Win64-MSVC-Release",
+            "includePath": [
+                // 确保顺序优先级
+                "${workspaceFolder}/include/eigen-3.4.0",  // Eigen根目录
+                "${workspaceFolder}/include/**",
+                "D:/LenovoSoftstore/Install/Microsoft_Visual_Studio/2019_C++Tools/VC/Tools/MSVC/14.29.30133/include",
+                "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/ucrt",
+                "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/shared",
+                "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/um"
+            ],
+            "defines": [
+                "_CRT_SECURE_NO_WARNINGS",
+                "WIN32",
+                "NDEBUG",
+                "EIGEN_NO_DEBUG"  // 添加Eigen优化宏
+            ],
+            "compilerPath": "D:/LenovoSoftstore/Install/Microsoft Visual Studio/2019_C++Tools/VC/Tools/MSVC/14.29.30133/bin/HostX64/x64/cl.exe",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-msvc-x64"
+        }
+    ],
+    "version": 4
+}

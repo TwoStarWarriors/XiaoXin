@@ -1,4 +1,0 @@
-D:/wenjian/GitHub/XiaoXin/Detection/XiongNongShang_c++/build/CMakeFiles/xns_algo.dir
-D:/wenjian/GitHub/XiaoXin/Detection/XiongNongShang_c++/build/CMakeFiles/test_xns.dir
-D:/wenjian/GitHub/XiaoXin/Detection/XiongNongShang_c++/build/CMakeFiles/ALL_BUILD.dir
-D:/wenjian/GitHub/XiaoXin/Detection/XiongNongShang_c++/build/CMakeFiles/ZERO_CHECK.dir

@@ -1,1 +1,0 @@
-D:/LenovoSoftstore/Install/Microsoft_Visual_Studio/2019_C++Tools/MSBuild/Microsoft/VC/v170

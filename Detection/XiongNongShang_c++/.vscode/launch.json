@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Release-Launch",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/release/XiongNongShang.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/release",
+            "environment": [
+                {
+                    "name": "PATH",
+                    "value": "${env:PATH};D:/LenovoSoftstore/Install/Microsoft_Visual_Studio/2019_C++Tools/VC/Redist/MSVC/14.29.30133/x64/Microsoft.VC142.CRT"
+                }
+            ],
+            "console": "externalTerminal",
+            "preLaunchTask": "Build-Release-MSVC"
+        }
+    ]
+}
