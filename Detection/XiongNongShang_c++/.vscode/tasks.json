@@ -12,6 +12,7 @@
                 "/EHsc",
                 "/openmp",
                 "/arch:AVX2", 
+                "/wd4392", 
                 "/I", "${workspaceFolder}/include",
                 "/I", "${workspaceFolder}/include/eigen-3.4.0",
                 "/I", "D:/LenovoSoftstore/Install/Microsoft_Visual_Studio/2019_C++Tools/VC/Tools/MSVC/14.29.30133/include",

@@ -1,4 +1,5 @@
-﻿#include "DataProcessor.h"
+﻿#pragma warning(disable: 4392)
+#include "DataProcessor.h"
 #include <iostream>
 #include <cstdlib>      // 添加缺失的头文件
 #include <locale>       // 可选：用于本地化配置

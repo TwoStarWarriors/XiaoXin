@@ -1,4 +1,5 @@
-﻿#include "DataProcessor.h"
+﻿#pragma warning(disable: 4392)
+#include "DataProcessor.h"
 #include <fstream>
 #include <sstream>
 #include <cmath>
