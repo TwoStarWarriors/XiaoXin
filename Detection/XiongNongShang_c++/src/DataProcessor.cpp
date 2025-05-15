@@ -164,7 +164,7 @@ Eigen::MatrixXd DataProcessor::calculateZScore(const Eigen::MatrixXd& data) {
         Eigen::VectorXd rowData = data.row(row);
         double mean = rowData.mean();
         double sumSq = (rowData.array() - mean).square().sum();
-        double stdDev = std::sqrt(sumSq / (rowData.size() - 1)); // 样本标准差 (ddof=1)
+        double stdDev = std::sqrt(sumSq / rowData.size()); // 样本标准差 (ddof=1)
         
         if (stdDev < 1e-7) {
             zScores.row(row).setZero();
@@ -177,15 +177,15 @@ Eigen::MatrixXd DataProcessor::calculateZScore(const Eigen::MatrixXd& data) {
 }
 
 void DataProcessor::saveResults(const Eigen::MatrixXd& moseData, 
-                              const Eigen::MatrixXd& acData,
-                              const std::string& filename) const {
+                                const Eigen::MatrixXd& acData,
+                                const std::string& filename) const {
     // 保存熵值结果
     std::ofstream moseFile(moseDirectory / ("mose_" + filename + ".csv"));
-    moseFile << moseData.format(Eigen::IOFormat(Eigen::StreamPrecision, 
-                                              Eigen::DontAlignCols, ", ", "\n"));
-    
+    // 修改输出格式为高精度
+    Eigen::IOFormat highPrecision(15, 0, ", ", "\n"); // 新增
+    moseFile << moseData.format(highPrecision);       
+
     // 保存Z-score结果
     std::ofstream acFile(acDirectory / ("ac_" + filename + ".csv"));
-    acFile << acData.format(Eigen::IOFormat(Eigen::StreamPrecision, 
-                                           Eigen::DontAlignCols, ", ", "\n"));
+    acFile << acData.format(highPrecision);           
 }
