@@ -32,6 +32,10 @@ private:
     
     static Eigen::MatrixXd calculateZScore(const Eigen::MatrixXd& data);
 
+    // 新增：匹配列名并记录索引
+    void matchColumnIndices(const std::vector<std::string>& headers);
+
+    // 预定义的目标列名
     const std::vector<std::string> colNames = {
         "CAN1_BMS_V1", "CAN1_BMS_V2", "CAN1_BMS_V3", "CAN1_BMS_V4",
         "CAN1_BMS_V5", "CAN1_BMS_V6", "CAN1_BMS_V7", "CAN1_BMS_V8",
@@ -39,6 +43,7 @@ private:
         "CAN1_BMS_V13", "CAN1_BMS_V14", "CAN1_BMS_V15", "CAN1_BMS_V16"
     };
 
+    std::vector<size_t> validColumnIndices;  // 有效列索引
     fs::path inputDirectory;
     fs::path moseDirectory;
     fs::path acDirectory;
