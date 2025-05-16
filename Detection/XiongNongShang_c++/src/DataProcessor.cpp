@@ -6,8 +6,9 @@
 #include <numeric>
 #include <clocale>
 #include <stdexcept>
+#include <iostream> 
 
-// 新增：匹配列名索引
+// 匹配列名索引
 void DataProcessor::matchColumnIndices(const std::vector<std::string>& headers) {
     validColumnIndices.clear();
     for (const auto& targetCol : colNames) {
@@ -17,6 +18,13 @@ void DataProcessor::matchColumnIndices(const std::vector<std::string>& headers) 
         }
         validColumnIndices.push_back(std::distance(headers.begin(), it));
     }
+}
+
+// 耗时统计工具函数实现
+void DataProcessor::printDuration(const std::string& msg, const std::chrono::steady_clock::time_point& start) {
+    auto end = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    std::cout << "[耗时统计] " << msg << ": " << duration << " ms" << std::endl;
 }
 
 // 构造函数实现
@@ -34,17 +42,28 @@ fs::create_directories(acDirectory);
 
 // processAllFiles 实现
 void DataProcessor::processAllFiles() {
-for (const auto& entry : fs::directory_iterator(inputDirectory)) {
-if (entry.path().extension() == ".csv") {
-processSingleFile(entry.path());
+    auto totalStart = std::chrono::steady_clock::now();  // 总耗时统计开始
+    
+    size_t fileCount = 0;
+    for (const auto& entry : fs::directory_iterator(inputDirectory)) {
+        if (entry.path().extension() == ".csv") {
+            auto fileStart = std::chrono::steady_clock::now();  // 单文件处理开始
+            processSingleFile(entry.path());
+            printDuration("处理文件 " + entry.path().filename().string(), fileStart);
+            fileCount++;
         }
     }
+    
+    printDuration("总处理时间", totalStart);
+    std::cout << "共处理文件数量: " << fileCount << std::endl;
 }
 
 // 修改后的 processSingleFile 函数
 void DataProcessor::processSingleFile(const fs::path& filePath) {
     std::setlocale(LC_ALL, "C");
-
+    
+    std::cout << "\n==== 开始处理文件: " << filePath.filename() << " ====" << std::endl;
+    auto start = std::chrono::steady_clock::now();
     Eigen::MatrixXd rawData;
     std::vector<double> buffer;
     std::ifstream file(filePath);
@@ -112,13 +131,24 @@ void DataProcessor::processSingleFile(const fs::path& filePath) {
     // 计算Z-score
     Eigen::MatrixXd acData = calculateZScore(moseData);
 
+    // === 在计算完成后添加统计信息 ===
+    std::cout << "[数据统计] 原始数据维度: " << rawData.rows() << " 行 x " << rawData.cols() << " 列" << std::endl;
+    std::cout << "[数据统计] 熵矩阵维度: " << moseData.rows() << " 行 x " << moseData.cols() << " 列" << std::endl;
+    std::cout << "[数据统计] 熵均值: " << moseData.mean() 
+              << " | 最大值: " << moseData.maxCoeff() 
+              << " | 最小值: " << moseData.minCoeff() << std::endl;
+    
+    printDuration("单个文件处理时间", start);
+
     // 保存结果
     saveResults(moseData, acData, filePath.stem().string());
+
 }
 
 Eigen::MatrixXd DataProcessor::calculateEntropy(const Eigen::MatrixXd& data, 
                                                int timeWindow,
                                                int changeInterval) {
+    auto start = std::chrono::steady_clock::now();
     int totalRows = data.rows();
     int cols = data.cols();
     Eigen::MatrixXd entropyMatrix(totalRows - timeWindow + 1, cols);
@@ -139,7 +169,7 @@ Eigen::MatrixXd DataProcessor::calculateEntropy(const Eigen::MatrixXd& data,
                 int binIndex = static_cast<int>(std::floor(normalized));
                 binIndex = std::clamp(binIndex, 0, changeInterval - 1); // 确保与 Python 的左闭右开区间一致
                 hist(binIndex) += 1.0;
-}
+            }
             
             // 计算香农熵
             Eigen::VectorXd prob = hist / timeWindow;
@@ -152,13 +182,13 @@ Eigen::MatrixXd DataProcessor::calculateEntropy(const Eigen::MatrixXd& data,
             entropyMatrix(i, col) = entropy;
         }
     }
-    
+    printDuration("熵计算耗时", start);
     return entropyMatrix;
 }
 
 Eigen::MatrixXd DataProcessor::calculateZScore(const Eigen::MatrixXd& data) {
     Eigen::MatrixXd zScores(data.rows(), data.cols());
-    
+    auto start = std::chrono::steady_clock::now();
     // 按行计算 Z-score
     for (int row = 0; row < data.rows(); ++row) {
         Eigen::VectorXd rowData = data.row(row);
@@ -172,7 +202,10 @@ Eigen::MatrixXd DataProcessor::calculateZScore(const Eigen::MatrixXd& data) {
             zScores.row(row) = (rowData.array() - mean) / stdDev;
         }
     }
+    std::cout << "[数据统计] Z-score 均值: " << zScores.mean() 
+              << " | 标准差: " << zScores.array().square().mean() << std::endl;
     
+    printDuration("Z-score 计算耗时", start);
     return zScores.cwiseAbs();
 }
 

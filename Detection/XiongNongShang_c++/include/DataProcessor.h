@@ -9,6 +9,7 @@
 #include "SVD"
 #include "Geometry"
 #include "Eigenvalues"
+#include <chrono> 
 
 namespace fs = std::filesystem;
 
@@ -32,6 +33,8 @@ private:
     
     static Eigen::MatrixXd calculateZScore(const Eigen::MatrixXd& data);
 
+    static void printDuration(const std::string& msg, const std::chrono::steady_clock::time_point& start);
+    
     // 新增：匹配列名并记录索引
     void matchColumnIndices(const std::vector<std::string>& headers);
 
