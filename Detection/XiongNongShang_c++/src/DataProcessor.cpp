@@ -29,15 +29,16 @@ void DataProcessor::printDuration(const std::string& msg, const std::chrono::ste
 
 // 构造函数实现
 DataProcessor::DataProcessor(const std::string& inputDir, 
-    const std::string& moseOutputDir,
-    const std::string& acOutputDir)
-: inputDirectory(inputDir),
-moseDirectory(moseOutputDir),
-acDirectory(acOutputDir)
-{
-// 创建输出目录
-fs::create_directories(moseDirectory);
-fs::create_directories(acDirectory);
+                            const std::string& moseOutputDir,
+                            const std::string& acOutputDir,
+                            const std::string& diagnosisOutputDir)
+    : inputDirectory(inputDir),
+      moseDirectory(moseOutputDir),
+      acDirectory(acOutputDir),
+      diagnosisDirectory(diagnosisOutputDir) {
+    // 创建输出目录
+    fs::create_directories(moseDirectory);
+    fs::create_directories(acDirectory);
 }
 
 // processAllFiles 实现
@@ -97,6 +98,11 @@ void DataProcessor::processSingleFile(const fs::path& filePath) {
             rowData.push_back(value);
         }
 
+        // 新增：提取时间戳（假设第一列为时间）
+        if (!rowData.empty()) {
+            timestamps.push_back(rowData[0]);
+        }
+
         // 检查列数是否足够
         size_t maxColIdx = *std::max_element(validColumnIndices.begin(), validColumnIndices.end());
         if (rowData.size() <= maxColIdx) {
@@ -143,6 +149,61 @@ void DataProcessor::processSingleFile(const fs::path& filePath) {
     // 保存结果
     saveResults(moseData, acData, filePath.stem().string());
 
+    // 计算异常计数
+    abnormalCounts.clear();
+    abnormalColumnsPerWindow.clear(); // 清空历史数据
+
+    for (int row = 0; row < acData.rows(); ++row) {
+        int count = 0;
+        std::vector<size_t> currentAbnormalCols;
+        
+        for (int col = 0; col < acData.cols(); ++col) {
+            if (acData(row, col) > Z_SCORE_THRESHOLD) {
+                count++;
+                currentAbnormalCols.push_back(col); // 记录异常列索引
+            }
+        }
+        
+        abnormalCounts.push_back(count);
+        abnormalColumnsPerWindow.push_back(currentAbnormalCols);
+    }
+    
+    // 保存诊断结果
+    saveDiagnosisResults(filePath.stem().string());
+}
+
+// 修改后的saveDiagnosisResults函数
+void DataProcessor::saveDiagnosisResults(const std::string& filename) const {
+    // 构造输出路径
+    fs::path outputPath = diagnosisDirectory / (filename + "_diagnosis.csv");
+    std::ofstream file(outputPath);
+    
+    file << "时间戳,异常位置,出现次数\n";
+
+    for (size_t i = 0; i < abnormalCounts.size(); ++i) {
+        if (abnormalCounts[i] == 0) continue;
+
+        // 时间戳转换
+        std::time_t rawTime = static_cast<time_t>(std::stoll(timestamps[i]));
+        struct tm *dt = localtime(&rawTime);
+        char buffer[30];
+        strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", dt);
+
+        // 统计异常列
+        std::unordered_map<std::string, int> counter;
+        for (auto colIdx : abnormalColumnsPerWindow[i]) {
+            counter[colNames[colIdx]]++;
+        }
+
+        // 生成详情
+        std::stringstream detail;
+        for (auto& [name, count] : counter) {
+            if (!detail.str().empty()) detail << "；";
+            detail << name << "（出现" << count << "次）";
+        }
+
+        file << buffer << "," << detail.str() << "\n";
+    }
 }
 
 Eigen::MatrixXd DataProcessor::calculateEntropy(const Eigen::MatrixXd& data, 

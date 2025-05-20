@@ -17,7 +17,8 @@ class DataProcessor {
 public:
     DataProcessor(const std::string& inputDir, 
                  const std::string& moseOutputDir,
-                 const std::string& acOutputDir);
+                 const std::string& acOutputDir,
+                 const std::string& diagnosisOutputDir);
     
     void processAllFiles();
 
@@ -26,6 +27,7 @@ private:
     void saveResults(const Eigen::MatrixXd& moseData, 
                     const Eigen::MatrixXd& acData,
                     const std::string& filename) const;
+    void saveDiagnosisResults(const std::string& filename) const;  // 新增声明
     
     static Eigen::MatrixXd calculateEntropy(const Eigen::MatrixXd& data, 
                                            int timeWindow,
@@ -35,7 +37,7 @@ private:
 
     static void printDuration(const std::string& msg, const std::chrono::steady_clock::time_point& start);
     
-    // 新增：匹配列名并记录索引
+    // 匹配列名并记录索引
     void matchColumnIndices(const std::vector<std::string>& headers);
 
     // 预定义的目标列名
@@ -46,11 +48,18 @@ private:
         "CAN1_BMS_V13", "CAN1_BMS_V14", "CAN1_BMS_V15", "CAN1_BMS_V16"
     };
 
-    std::vector<size_t> validColumnIndices;  // 有效列索引
+    std::vector<size_t> validColumnIndices;
     fs::path inputDirectory;
     fs::path moseDirectory;
     fs::path acDirectory;
+    fs::path diagnosisDirectory;
+
+    std::vector<std::string> timestamps;
+    std::vector<int> abnormalCounts;
+    std::vector<std::vector<size_t>> abnormalColumnsPerWindow;
     
-    const int TIME_WINDOW = 20;
-    const int CHANGE_INTERVAL = 50;
+    // 修改为静态常量（C++11支持类内初始化）
+    static constexpr int TIME_WINDOW = 300;   
+    static constexpr int CHANGE_INTERVAL = 50;
+    static constexpr double Z_SCORE_THRESHOLD = 3.0;
 };

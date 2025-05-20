@@ -18,8 +18,9 @@ int main() {
         const std::string inputDir = "Data/data_input";
         const std::string moseDir = "Data/mose_output";
         const std::string acDir = "Data/ac_output";
+        const std::string diagnosisDir = "Data/diagnosis_output"; 
         
-        DataProcessor processor(inputDir, moseDir, acDir);
+        DataProcessor processor(inputDir, moseDir, acDir, diagnosisDir);
         processor.processAllFiles();
         
         std::cout << "数据处理完成！" << std::endl;
