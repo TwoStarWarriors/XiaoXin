@@ -58,8 +58,10 @@ private:
     std::vector<int> abnormalCounts;
     std::vector<std::vector<size_t>> abnormalColumnsPerWindow;
     
+
     // 修改为静态常量（C++11支持类内初始化）
-    static constexpr int TIME_WINDOW = 300;   
-    static constexpr int CHANGE_INTERVAL = 50;
-    static constexpr double Z_SCORE_THRESHOLD = 3.0;
+    static constexpr int TIME_WINDOW = 60;           //5分钟预测需求，实现每分钟更新诊断结果（60秒窗口+滑动机制）
+    static constexpr int CHANGE_INTERVAL = 30;       //每30秒滑动一次窗口，保证5分钟内至少10次诊断计算，提升时效性
+    static constexpr int CSLIDING_STEP = 30;         //降低直方图空桶概率（60数据点/窗口 ÷30桶=2点/桶，提升统计显著性）
+    static constexpr double Z_SCORE_THRESHOLD = 3.0; //±3σ的异常判定标准
 };

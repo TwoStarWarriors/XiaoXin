@@ -7,6 +7,7 @@
 #include <clocale>
 #include <stdexcept>
 #include <iostream> 
+#include <map>
 
 // 匹配列名索引
 void DataProcessor::matchColumnIndices(const std::vector<std::string>& headers) {
@@ -36,9 +37,10 @@ DataProcessor::DataProcessor(const std::string& inputDir,
       moseDirectory(moseOutputDir),
       acDirectory(acOutputDir),
       diagnosisDirectory(diagnosisOutputDir) {
-    // 创建输出目录
-    fs::create_directories(moseDirectory);
-    fs::create_directories(acDirectory);
+    // 创建输出目录，调试时恢复
+    // fs::create_directories(moseDirectory);
+    // fs::create_directories(acDirectory);
+    // fs::create_directories(diagnosisOutputDir);
 }
 
 // processAllFiles 实现
@@ -61,6 +63,9 @@ void DataProcessor::processAllFiles() {
 
 // 修改后的 processSingleFile 函数
 void DataProcessor::processSingleFile(const fs::path& filePath) {
+    abnormalCounts.clear();
+    abnormalColumnsPerWindow.clear();
+
     std::setlocale(LC_ALL, "C");
     
     std::cout << "\n==== 开始处理文件: " << filePath.filename() << " ====" << std::endl;
@@ -146,8 +151,8 @@ void DataProcessor::processSingleFile(const fs::path& filePath) {
     
     printDuration("单个文件处理时间", start);
 
-    // 保存结果
-    saveResults(moseData, acData, filePath.stem().string());
+    // 保存结果，调试时恢复
+    // saveResults(moseData, acData, filePath.stem().string());
 
     // 计算异常计数
     abnormalCounts.clear();
@@ -158,6 +163,15 @@ void DataProcessor::processSingleFile(const fs::path& filePath) {
         std::vector<size_t> currentAbnormalCols;
         
         for (int col = 0; col < acData.cols(); ++col) {
+            // ================= 新增：列索引检查 =================
+            if (col < 0 || col >= static_cast<int>(colNames.size())) {
+                std::cerr << "[错误] 检测到无效列索引: " << col 
+                          << ", 最大允许值: " << (colNames.size() - 1) 
+                          << std::endl;
+                continue; // 跳过无效列
+            }
+            // ================= 检查结束 =================
+            
             if (acData(row, col) > Z_SCORE_THRESHOLD) {
                 count++;
                 currentAbnormalCols.push_back(col); // 记录异常列索引
@@ -172,51 +186,79 @@ void DataProcessor::processSingleFile(const fs::path& filePath) {
     saveDiagnosisResults(filePath.stem().string());
 }
 
-// 修改后的saveDiagnosisResults函数
+// saveDiagnosisResults
 void DataProcessor::saveDiagnosisResults(const std::string& filename) const {
-    // 构造输出路径
     fs::path outputPath = diagnosisDirectory / (filename + "_diagnosis.csv");
     std::ofstream file(outputPath);
     
-    file << "时间戳,异常位置,出现次数\n";
-
-    for (size_t i = 0; i < abnormalCounts.size(); ++i) {
-        if (abnormalCounts[i] == 0) continue;
-
-        // 时间戳转换
-        std::time_t rawTime = static_cast<time_t>(std::stoll(timestamps[i]));
-        struct tm *dt = localtime(&rawTime);
-        char buffer[30];
-        strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", dt);
-
-        // 统计异常列
-        std::unordered_map<std::string, int> counter;
-        for (auto colIdx : abnormalColumnsPerWindow[i]) {
-            counter[colNames[colIdx]]++;
-        }
-
-        // 生成详情
-        std::stringstream detail;
-        for (auto& [name, count] : counter) {
-            if (!detail.str().empty()) detail << "；";
-            detail << name << "（出现" << count << "次）";
-        }
-
-        file << buffer << "," << detail.str() << "\n";
+    if (!file.is_open()) {
+        throw std::runtime_error("无法创建诊断文件: " + outputPath.string());
     }
+
+    auto sanitizeString = [](std::string str) {
+        str.erase(std::remove_if(str.begin(), str.end(), 
+            [](unsigned char c) { return !std::isprint(c); }), str.end());
+        std::replace(str.begin(), str.end(), ',', ';');
+        std::replace(str.begin(), str.end(), '\t', '-');
+        return str;
+    };
+
+    std::map<std::string, int> counter;
+    for (const auto& window : abnormalColumnsPerWindow) {
+        for (auto colIdx : window) {
+            if (colIdx >= colNames.size()) {
+                std::cerr << "[错误] 无效列索引: " << colIdx 
+                        << "，最大允许值: " << (colNames.size()-1)
+                        << "，已跳过该异常记录" << std::endl;
+                continue;
+            }
+            const std::string rawPos = colNames[colIdx];
+            const std::string safePos = sanitizeString(rawPos);
+            counter[safePos]++;
+        }
+    }
+
+    // 写入文件（严格保证两列格式）
+    file << "\xEF\xBB\xBF"; // UTF-8 BOM
+    file << "异常单体位置,总出现次数" << std::endl;
+
+    if (counter.empty()) {
+        // 无异常时写入默认行
+        file << "无,0" << std::endl;
+    } else {
+        // 有异常时写入统计结果
+        for (const auto& [position, count] : counter) {
+            file << sanitizeString(position) << "," << std::to_string(count) << std::endl;
+        }
+    }
+
+    if (file.fail()) {
+        throw std::runtime_error("文件写入失败，可能磁盘已满或权限不足");
+    }
+    file.close();
+
+    // 调试：输出前16条记录验证，调试时打开
+    // std::cout << "[调试] 诊断结果样例:\n";
+    // auto it = counter.begin();
+    // for (int i=0; i<std::min(16, (int)counter.size()); ++i, ++it) {
+    //     std::cout << "  " << it->first << " : " << it->second << std::endl;
+    // }
 }
 
 Eigen::MatrixXd DataProcessor::calculateEntropy(const Eigen::MatrixXd& data, 
-                                               int timeWindow,
-                                               int changeInterval) {
+                                                int timeWindow,
+                                                int changeInterval) {
     auto start = std::chrono::steady_clock::now();
     int totalRows = data.rows();
-    int cols = data.cols();
-    Eigen::MatrixXd entropyMatrix(totalRows - timeWindow + 1, cols);
+    int cols = data.cols(); // 新增：获取数据列数
+    int totalWindows = (totalRows - timeWindow) / CSLIDING_STEP + 1;  // 修正变量名
+
+    Eigen::MatrixXd entropyMatrix(totalWindows, cols);  // 使用局部变量cols
 
     #pragma omp parallel for
-    for (int i = 0; i <= totalRows - timeWindow; ++i) {
-        Eigen::MatrixXd window = data.block(i, 0, timeWindow, cols);
+    for (int i = 0; i < totalWindows; ++i) {
+        int startRow = i * CSLIDING_STEP; // 修正变量名
+        Eigen::MatrixXd window = data.block(startRow, 0, timeWindow, cols); // 使用cols
         
         Eigen::RowVectorXd minVals = window.colwise().minCoeff();
         Eigen::RowVectorXd maxVals = window.colwise().maxCoeff();
@@ -224,7 +266,7 @@ Eigen::MatrixXd DataProcessor::calculateEntropy(const Eigen::MatrixXd& data,
         for (int col = 0; col < cols; ++col) {
             // 计算直方图
             Eigen::VectorXd hist = Eigen::VectorXd::Zero(changeInterval);
-            double binWidth = (maxVals(col) - minVals(col)) / changeInterval;
+            double binWidth = (maxVals(col) - minVals(col)) / CHANGE_INTERVAL;
             for (int row = 0; row < timeWindow; ++row) {
                 double normalized = (window(row, col) - minVals(col)) / binWidth;
                 int binIndex = static_cast<int>(std::floor(normalized));
@@ -273,13 +315,13 @@ Eigen::MatrixXd DataProcessor::calculateZScore(const Eigen::MatrixXd& data) {
 void DataProcessor::saveResults(const Eigen::MatrixXd& moseData, 
                                 const Eigen::MatrixXd& acData,
                                 const std::string& filename) const {
-    // 保存熵值结果
-    std::ofstream moseFile(moseDirectory / ("mose_" + filename + ".csv"));
-    // 修改输出格式为高精度
-    Eigen::IOFormat highPrecision(15, 0, ", ", "\n"); // 新增
-    moseFile << moseData.format(highPrecision);       
+    // 保存熵值结果，调试时恢复
+    // std::ofstream moseFile(moseDirectory / ("mose_" + filename + ".csv"));
+    // 修改输出格式为高精度，调试时恢复
+    // Eigen::IOFormat highPrecision(15, 0, ", ", "\n"); // 新增
+    // moseFile << moseData.format(highPrecision);       
 
-    // 保存Z-score结果
-    std::ofstream acFile(acDirectory / ("ac_" + filename + ".csv"));
-    acFile << acData.format(highPrecision);           
+    // 保存Z-score结果，调试时恢复
+    // std::ofstream acFile(acDirectory / ("ac_" + filename + ".csv"));
+    // acFile << acData.format(highPrecision);           
 }
