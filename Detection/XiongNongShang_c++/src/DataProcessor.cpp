@@ -9,6 +9,36 @@
 #include <iostream> 
 #include <map>
 
+std::ofstream DataProcessor::logFile;
+
+void DataProcessor::initLog() {
+    if (!logFile.is_open()) {
+        logFile.open("XNS_Runtime.log", std::ios::app);
+        auto now = std::chrono::system_clock::now();
+        std::time_t t = std::chrono::system_clock::to_time_t(now);
+        logFile << "\n==== 进程启动 ==== " << std::ctime(&t);
+    }
+}
+
+void DataProcessor::closeLog() {
+    if (logFile.is_open()) {
+        auto now = std::chrono::system_clock::now();
+        std::time_t t = std::chrono::system_clock::to_time_t(now);
+        logFile << "==== 进程结束 ==== " << std::ctime(&t) << std::endl;
+        logFile.close();
+    }
+}
+
+void DataProcessor::logProgress(const std::string& message) {
+    if (logFile.is_open()) {
+        auto now = std::chrono::system_clock::now();
+        std::time_t t = std::chrono::system_clock::to_time_t(now);
+        logFile << "[" << std::put_time(std::localtime(&t), "%F %T") << "] " 
+                << message << std::endl;
+    }
+}
+
+
 // 匹配列名索引
 void DataProcessor::matchColumnIndices(const std::vector<std::string>& headers) {
     validColumnIndices.clear();
@@ -45,6 +75,7 @@ DataProcessor::DataProcessor(const std::string& inputDir,
 
 // processAllFiles 实现
 void DataProcessor::processAllFiles() {
+    logProgress("开始扫描目录: " + inputDirectory.string());
     auto totalStart = std::chrono::steady_clock::now();  // 总耗时统计开始
     
     size_t fileCount = 0;
@@ -59,6 +90,7 @@ void DataProcessor::processAllFiles() {
     
     printDuration("总处理时间", totalStart);
     std::cout << "共处理文件数量: " << fileCount << std::endl;
+    logProgress("总处理完成，共处理文件: " + std::to_string(fileCount));
 }
 
 // 修改后的 processSingleFile 函数
@@ -67,7 +99,7 @@ void DataProcessor::processSingleFile(const fs::path& filePath) {
     abnormalColumnsPerWindow.clear();
 
     std::setlocale(LC_ALL, "C");
-    
+    logProgress("开始处理文件: " + filePath.filename().string());
     std::cout << "\n==== 开始处理文件: " << filePath.filename() << " ====" << std::endl;
     auto start = std::chrono::steady_clock::now();
     Eigen::MatrixXd rawData;

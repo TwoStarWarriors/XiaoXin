@@ -1,0 +1,12 @@
+
+==== 进程启动 ==== Thu May 22 11:56:53 2025
+[2025-05-22 11:56:53] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-22 11:56:53] 开始处理文件: gongkuang2_cycle45.csv
+[2025-05-22 11:56:53] 开始处理文件: gongkuang2_cycle_4.csv
+[2025-05-22 11:56:53] 总处理完成，共处理文件: 2
+
+==== 进程启动 ==== Thu May 22 11:58:36 2025
+[2025-05-22 11:58:36] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-22 11:58:36] 开始处理文件: 123.csv
+[2025-05-22 11:58:36] 开始处理文件: gongkuang2_cycle_4.csv
+[2025-05-22 11:58:36] 总处理完成，共处理文件: 2

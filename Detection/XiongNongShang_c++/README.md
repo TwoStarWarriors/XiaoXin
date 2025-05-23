@@ -7,10 +7,10 @@
 #### **项目概述**  
 本项目基于 C++ 重构了电池电压数据分析算法全流程，实现了数据读取、香农熵计算、Z-score 标准化及故障诊断功能，提供封装完善的 `DataProcessor` 类接口。  
 **核心功能**：  
-1. 动态匹配 CSV 文件列名（仅支持 `CAN1_BMS_V1` 至 `CAN1_BMS_V16`）。  
-2. 基于滑动窗口的香农熵计算（时间窗口和滑动步长可配置）。  
-3. 按窗口 Z-score 标准化处理与异常检测。  
-4. 生成诊断报告（`*_diagnosis.csv`）及统计信息。  
+- 实时监控电池单体电压数据（BMS_Cell_Volt_01~16）
+- 基于滑动窗口熵值计算（MOSE）和Z-Score分析（AC）
+- 生成带时间戳的诊断结果和运行状态标志
+- 支持多文件批量处理
 
 ---
 
@@ -22,38 +22,54 @@
 ---
 
 ### **快速集成指南**  
-#### **1. 项目结构**  
+#### **1. .vs项目结构**  
 ```  
-XiongNongShang_c++/  
-├── include/  
-│   ├── DataProcessor.h       # 核心头文件  
-│   └── eigen-3.4.0/          # Eigen 头文件（已内置）  
-├── src/  
-│   ├── DataProcessor.cpp     # 实现文件  
-│   └── main.cpp              # 示例调用  
-└── Data/  
-    ├── data_input/           # 输入 CSV 文件（300 行 x 16 列）  
-    ├── diagnosis_output/     # 诊断结果文件（必需）  
-    ├── mose_output/          # 熵值结果（调试时启用）  
-    └── ac_output/            # Z-score 结果（调试时启用）  
+BID/ (或任意部署目录)
+├── XiongNongShang.exe # 主程序
+├── Data/ # 自动检测的输入输出目录
+│ ├── data_input/ # 输入CSV文件（UTF-8编码）
+│ ├── mose_output/ # 熵值分析结果（暂时不生成，调试再打开）
+│ ├── ac_output/ # 异常检测结果（暂时不生成，调试再打开）
+│ └── diagnosis_output/ # 最终诊断报告（自动创建）
+├── XNS_Runtime.log # 运行时日志
+└── XNS_Status.flag # 状态标志文件 
 ```  
 
-#### **2. 编译器配置（VS Code）**  
-1. **包含目录配置**（`c_cpp_properties.json`）：  
-   ```json  
-   "includePath": [  
-       "${workspaceFolder}/include",  
-       "${workspaceFolder}/include/eigen-3.4.0"  
-   ]  
-   ```  
-2. **预处理器定义**：  
-   ```json  
-   "defines": ["_CRT_SECURE_NO_WARNINGS", "EIGEN_NO_DEBUG"]  
-   ```  
+#### **2. C# 日志调用示例**  
+```csharp
+public class ProcessMonitor {
+    const string LogFile = "XNS_Runtime.log";
+    const string FlagFile = "XNS_Status.flag";
+    
+    // 检查程序是否在运行
+    public bool IsRunning() {
+        if (File.Exists(FlagFile)) return false; // 存在标志文件=进程结束
+        return File.Exists(LogFile) && 
+              (DateTime.Now - File.GetLastWriteTime(LogFile)).TotalMinutes < 5;
+    }
 
----
+    // 获取详细状态
+    public string GetStatus() {
+        if (!File.Exists(LogFile)) return "未启动";
+        if (File.Exists(FlagFile)) {
+            var lines = File.ReadAllLines(FlagFile);
+            return lines.Length > 0 ? 
+                (lines[0].StartsWith("COMPLETED") ? "已完成" : "异常终止") 
+                : "未知状态";
+        }
+        return "运行中...";
+    }
+}
 
-### **接口调用示例**  
+// 启动程序示例
+ProcessStartInfo startInfo = new ProcessStartInfo {
+    FileName = @"BID\XiongNongShang.exe",
+    UseShellExecute = true,
+    CreateNoWindow = true
+};
+Process.Start(startInfo);
+
+### **C++ 接口调用示例**  
 ```cpp  
 #include "DataProcessor.h"  
 
@@ -82,7 +98,7 @@ int main() {
 #### **输入要求**  
 - **文件格式**: CSV 文件需包含标题行，必须包含以下 16 列（顺序不限）：  
   ```cpp  
-  "CAN1_BMS_V1", "CAN1_BMS_V2", ..., "CAN1_BMS_V16"  
+  "BMS_Cell_Volt_01~16"  
   ```  
 - **数据格式**: 电压值为浮点数（单位：V），示例：  
   ```csv  
@@ -93,8 +109,8 @@ int main() {
 - **诊断报告**: `diagnosis_output/*_diagnosis.csv`，格式如下：  
   ```csv  
   异常单体位置,总出现次数  
-  CAN1_BMS_V7,2811  
-  CAN1_BMS_V8,741  
+  BMS_Cell_Volt_01~16,2811  
+  BMS_Cell_Volt_01~16,741  
   ...  
   ```  
 - **调试输出**: 控制台显示数据维度、熵值统计和耗时信息。  
@@ -123,8 +139,8 @@ class DataProcessor {
 [耗时统计] 熵计算耗时: 226 ms  
 [数据统计] Z-score 均值: 9.17e-17 | 标准差: 1  
 [调试] 诊断结果样例:  
-  CAN1_BMS_V7 : 2811  
-  CAN1_BMS_V8 : 741  
+  BMS_Cell_Volt_01~16 : 2811  
+  BMS_Cell_Volt_01~16 : 741  
 [耗时统计] 总处理时间: 713 ms  
 ```  
 
