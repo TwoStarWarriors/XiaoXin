@@ -17,10 +17,16 @@ pd.set_option('display.unicode.ambiguous_as_wide', True)
 pd.set_option('display.unicode.east_asian_width', True)
 
 # 核心参数配置
-input_csv = "C:/Users/86158/Desktop/邓树源_3121004486/邓树源+江励/中期/新能安两轮电池项目_T6-20230104-G031\T6-20230104-G031/2_类别一拆分数据/循环工况拆分/cycle_4.csv"
+input_csv = "C:/Users/86158/Desktop/邓树源_3121004486/邓树源+江励/中期/新能安两轮电池项目_T6-20230104-G031/T6-20230104-G031/2_类别一拆分数据/循环工况拆分/cycle_4.csv"
 output_root = "C:/Users/86158/Desktop/Diagnosis_Results"
-volt_cols = [f'CAN1_BMS_V{i+1}' for i in range(16)]
+volt_cols = ['BMS_Cell_Volt_01','BMS_Cell_Volt_02','BMS_Cell_Volt_03','BMS_Cell_Volt_04',
+        'BMS_Cell_Volt_05','BMS_Cell_Volt_06','BMS_Cell_Volt_07','BMS_Cell_Volt_08',
+        'BMS_Cell_Volt_09','BMS_Cell_Volt_10','BMS_Cell_Volt_11','BMS_Cell_Volt_12',
+        'BMS_Cell_Volt_13','BMS_Cell_Volt_14','BMS_Cell_Volt_15','BMS_Cell_Volt_16'] 
 voltage_range = (2.5, 4.5)
+
+# 数据加载
+raw_df = pd.read_csv(input_csv)
 
 # 扩展报警字段（覆盖所有可能故障）
 alarm_cols = [
@@ -416,7 +422,7 @@ for diag_period in merged_periods:
     y_pos = max(abnormal_counts) * 1.05  # 标注在曲线顶部上方
     
     # 生成排序后的单体名称（按V1, V2, V3...自然排序）
-    sorted_cells = sorted(diag_period['cells'], key=lambda x: int(x.split('_V')[-1]))
+    sorted_cells = sorted(diag_period['cells'], key=lambda x: int(x.split('_')[-1]))
     label_text = '、'.join(sorted_cells)
     
     # 添加标注（红色文字+白色背景框）

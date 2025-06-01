@@ -45,10 +45,10 @@ private:
 
     // 预定义的目标列名
     const std::vector<std::string> colNames = {
-        "BMS_Cell_Volt_01", "BMS_Cell_Volt_02", "BMS_Cell_Volt_03", "BMS_Cell_Volt_04",
-        "BMS_Cell_Volt_05", "BMS_Cell_Volt_06", "BMS_Cell_Volt_07", "BMS_Cell_Volt_08",
-        "BMS_Cell_Volt_09", "BMS_Cell_Volt_10", "BMS_Cell_Volt_11", "BMS_Cell_Volt_12",
-        "BMS_Cell_Volt_13", "BMS_Cell_Volt_14", "BMS_Cell_Volt_15", "BMS_Cell_Volt_16"
+        "V 1(V)", "V 2(V)", "V 3(V)", "V 4(V)",
+        "V 5(V)", "V 6(V)", "V 7(V)", "V 8(V)",
+        "V 9(V)", "V 10(V)", "V 11(V)", "V 12(V)",
+        "V 13(V)", "V 14(V)", "V 15(V)"
     };
 
     std::vector<size_t> validColumnIndices;
@@ -61,8 +61,13 @@ private:
     std::vector<int> abnormalCounts;
     std::vector<std::vector<size_t>> abnormalColumnsPerWindow;
     
+    std::vector<std::string> headers;
+    bool foundHeader = false;
+
     static std::ofstream logFile;  // 日志文件流
     static void closeLog();        // 日志关闭
+    
+    static constexpr int MAX_HEADER_SEARCH_LINES = 100;
 
     // 修改为静态常量（C++11支持类内初始化）
     static constexpr int TIME_WINDOW = 60;           //5分钟预测需求，实现每分钟更新诊断结果（60秒窗口+滑动机制）

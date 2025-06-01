@@ -10,3 +10,153 @@
 [2025-05-22 11:58:36] 开始处理文件: 123.csv
 [2025-05-22 11:58:36] 开始处理文件: gongkuang2_cycle_4.csv
 [2025-05-22 11:58:36] 总处理完成，共处理文件: 2
+
+==== 进程启动 ==== Mon May 26 18:24:18 2025
+[2025-05-26 18:24:18] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-26 18:24:18] 开始处理文件: 123.csv
+[2025-05-26 18:24:18] 开始处理文件: gongkuang2_cycle_4.csv
+[2025-05-26 18:24:18] 总处理完成，共处理文件: 2
+
+==== 进程启动 ==== Thu May 29 18:58:57 2025
+[2025-05-29 18:58:57] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 18:58:57] 开始处理文件: 123.csv
+[2025-05-29 18:58:57] 开始处理文件: gongkuang2_cycle_4.csv
+[2025-05-29 18:58:57] 总处理完成，共处理文件: 2
+
+==== 进程启动 ==== Thu May 29 19:50:36 2025
+[2025-05-29 19:50:36] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 19:50:36] 开始处理文件: 123.csv
+[2025-05-29 19:50:36] 异常终止: 未找到有效的电压列
+
+==== 进程启动 ==== Thu May 29 19:51:39 2025
+[2025-05-29 19:51:39] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 19:51:39] 开始处理文件: 123.csv
+[2025-05-29 19:51:39] 异常终止: 未找到有效的电压列
+
+==== 进程启动 ==== Thu May 29 19:55:10 2025
+[2025-05-29 19:55:10] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 19:55:10] 开始处理文件: 123.csv
+[2025-05-29 19:55:10] 异常终止: 未找到有效的电压列
+
+==== 进程启动 ==== Thu May 29 19:55:32 2025
+[2025-05-29 19:55:32] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\Release\Data\data_input
+[2025-05-29 19:55:32] 开始处理文件: 123.csv
+[2025-05-29 19:55:32] 异常终止: 未找到有效的电压列
+
+==== 进程启动 ==== Thu May 29 19:58:16 2025
+[2025-05-29 19:58:16] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 19:58:16] 开始处理文件: 123.csv
+[2025-05-29 19:58:16] 异常终止: regex_error(error_escape): The expression contained an invalid escaped character, or a trailing escape.
+
+==== 进程启动 ==== Thu May 29 19:59:00 2025
+[2025-05-29 19:59:00] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 19:59:00] 开始处理文件: 123.csv
+[2025-05-29 19:59:00] 异常终止: 未找到有效的电压列
+
+==== 进程启动 ==== Thu May 29 20:02:02 2025
+[2025-05-29 20:02:02] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 20:02:02] 开始处理文件: 123.csv
+[2025-05-29 20:02:02] 异常终止: 未找到有效的电压列
+
+==== 进程启动 ==== Thu May 29 20:02:53 2025
+[2025-05-29 20:02:53] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 20:02:53] 开始处理文件: 123.csv
+
+==== 进程启动 ==== Thu May 29 20:06:17 2025
+[2025-05-29 20:06:17] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 20:06:17] 开始处理文件: 123.csv
+[2025-05-29 20:06:17] 开始处理文件: gongkuang2_cycle_4.csv
+[2025-05-29 20:06:17] 总处理完成，共处理文件: 2
+
+==== 进程启动 ==== Thu May 29 20:10:56 2025
+[2025-05-29 20:10:56] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 20:10:56] 开始处理文件: 123.csv
+
+==== 进程启动 ==== Thu May 29 20:11:43 2025
+[2025-05-29 20:11:43] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 20:11:43] 开始处理文件: 123.csv
+
+==== 进程启动 ==== Thu May 29 20:14:46 2025
+[2025-05-29 20:14:46] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 20:14:46] 开始处理文件: 123.csv
+[2025-05-29 20:14:46] 开始处理文件: gongkuang2_cycle_4.csv
+[2025-05-29 20:14:46] 总处理完成，共处理文件: 2
+
+==== 进程启动 ==== Thu May 29 21:38:02 2025
+[2025-05-29 21:38:02] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 21:38:02] 开始处理文件: 123.csv
+[2025-05-29 21:38:02] 开始处理文件: gongkuang2_cycle_4.csv
+[2025-05-29 21:38:02] 总处理完成，共处理文件: 2
+
+==== 进程启动 ==== Thu May 29 21:40:17 2025
+[2025-05-29 21:40:17] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 21:40:17] 开始处理文件: 123.csv
+[2025-05-29 21:40:17] 异常终止: 列名 'V 16(V)' 在输入文件中未找到
+
+==== 进程启动 ==== Thu May 29 21:41:12 2025
+[2025-05-29 21:41:12] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 21:41:12] 开始处理文件: 123.csv
+[2025-05-29 21:41:13] 开始处理文件: gongkuang2_cycle_4.csv
+[2025-05-29 21:41:13] 总处理完成，共处理文件: 2
+
+==== 进程启动 ==== Thu May 29 21:42:54 2025
+[2025-05-29 21:42:54] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 21:42:54] 开始处理文件: 123.csv
+[2025-05-29 21:42:54] 开始处理文件: gongkuang2_cycle_4.csv
+[2025-05-29 21:42:54] 开始处理文件: RT20250529203634.csv
+[2025-05-29 21:42:54] 异常终止: 列名 'V 1(V)' 在输入文件中未找到
+
+==== 进程启动 ==== Thu May 29 21:44:20 2025
+[2025-05-29 21:44:20] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 21:44:20] 开始处理文件: 123.csv
+[2025-05-29 21:44:20] 开始处理文件: gongkuang2_cycle_4.csv
+[2025-05-29 21:44:20] 开始处理文件: RT20250529203634.csv
+[2025-05-29 21:44:20] 异常终止: 列名 'V 1(V)' 在输入文件中未找到
+
+==== 进程启动 ==== Thu May 29 21:53:21 2025
+[2025-05-29 21:53:21] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 21:53:21] 开始处理文件: 123.csv
+[2025-05-29 21:53:21] 异常终止: 列名 'V 1(V)' 在输入文件中未找到
+
+==== 进程启动 ==== Thu May 29 21:54:44 2025
+[2025-05-29 21:54:44] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 21:54:44] 开始处理文件: RT20250529203634.csv
+[2025-05-29 21:54:44] 异常终止: 列名 'V 1(V)' 在输入文件中未找到
+
+==== 进程启动 ==== Thu May 29 21:55:58 2025
+[2025-05-29 21:55:58] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 21:55:58] 开始处理文件: 123.csv
+[2025-05-29 21:55:58] 在行 1 找到列名
+
+==== 进程启动 ==== Thu May 29 22:06:52 2025
+[2025-05-29 22:06:52] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 22:06:52] 开始处理文件: RT20250529203634.csv
+[2025-05-29 22:06:52] 在行 4 找到列名
+[2025-05-29 22:06:52] 异常终止: 列名 'V 1(V)' 在输入文件中未找到
+
+==== 进程启动 ==== Thu May 29 22:07:26 2025
+[2025-05-29 22:07:26] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 22:07:26] 开始处理文件: RT20250529203634.csv
+[2025-05-29 22:07:26] 在行 4 找到列名
+[2025-05-29 22:07:26] 异常终止: 列名 'V 1(V)' 在输入文件中未找到
+
+==== 进程启动 ==== Thu May 29 22:10:33 2025
+[2025-05-29 22:10:33] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 22:10:33] 开始处理文件: RT20250529203634.csv
+[2025-05-29 22:10:33] 在行 4 找到列名
+
+==== 进程启动 ==== Thu May 29 22:17:41 2025
+[2025-05-29 22:17:41] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 22:17:41] 开始处理文件: RT20250529203634.csv
+[2025-05-29 22:17:41] 在行 4 找到列名
+
+==== 进程启动 ==== Thu May 29 22:18:15 2025
+[2025-05-29 22:18:15] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 22:18:15] 开始处理文件: RT20250529203634.csv
+[2025-05-29 22:18:15] 在行 4 找到列名
+
+==== 进程启动 ==== Thu May 29 22:21:24 2025
+[2025-05-29 22:21:24] 开始扫描目录: D:\wenjian\GitHub\XiaoXin\Detection\XiongNongShang_c++\release\Data\data_input
+[2025-05-29 22:21:24] 开始处理文件: RT20250529203634.csv
+[2025-05-29 22:21:24] 在行 4 找到列名
+[2025-05-29 22:21:24] 总处理完成，共处理文件: 1

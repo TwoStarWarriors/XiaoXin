@@ -1,0 +1,55 @@
+{
+    "configurations": [
+        {
+            "name": "Win64-MSVC-Debug",
+            "includePath": [
+                "${workspaceFolder}/CppCallPython/**",
+                "${workspaceFolder}/3rdparty/python_env/include",
+                // "${workspaceFolder}/3rdparty/opencv/include",
+                "${workspaceFolder}/3rdparty/python_env/libs",
+                "D:/LenovoSoftstore/Install/Microsoft_Visual_Studio/2019_C++Tools/VC/Tools/MSVC/14.29.30133/include",
+                "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/ucrt",
+                "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/shared",
+                "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/um",
+                "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/winrt",
+                "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/cppwinrt"
+            ],
+            "defines": [
+                "_WINSOCK_DEPRECATED_NO_WARNINGS",
+                "_CRT_SECURE_NO_DEPRECATE",
+                "WIN32",
+                "_DEBUG",
+                "_CRT_SECURE_NO_WARNINGS"
+            ],
+            "compilerPath": "D:/LenovoSoftstore/Install/Microsoft Visual Studio/2019_C++Tools/VC/Tools/MSVC/14.29.30133/bin/HostX64/x64/cl.exe",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-msvc-x64"
+        },
+        {
+            "name": "Win64-MSVC-Release",
+            "includePath": [
+                "${workspaceFolder}/CppCallPython/**",
+                "${workspaceFolder}/3rdparty/python_env/include",
+                // "${workspaceFolder}/3rdparty/opencv/include",
+                "${workspaceFolder}/3rdparty/python_env/libs",
+                "D:/LenovoSoftstore/Install/Microsoft_Visual_Studio/2019_C++Tools/VC/Tools/MSVC/14.29.30133/include",
+                "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/ucrt",
+                "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/shared",
+                "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/um",
+                "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/winrt",
+                "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/cppwinrt"
+            ],
+            "defines": [
+                "_WINSOCK_DEPRECATED_NO_WARNINGS",
+                "_CRT_SECURE_NO_DEPRECATE",
+                "WIN32",
+                "NDEBUG",
+                "_CRT_SECURE_NO_WARNINGS"
+            ],
+            "compilerPath": "D:/LenovoSoftstore/Install/Microsoft Visual Studio/2019_C++Tools/VC/Tools/MSVC/14.29.30133/bin/HostX64/x64/cl.exe",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-msvc-x64"
+        }
+    ],
+    "version": 4
+}

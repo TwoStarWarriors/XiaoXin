@@ -1,184 +1,202 @@
 import pandas as pd
 import numpy as np
-import glob
 import time
 import os
 from sklearn.ensemble import IsolationForest
 from sklearn.impute import SimpleImputer
+import warnings
 
-# 配置参数
-input_folder = r'D:\50'
-output_folder = r'C:\Users\2025cxzx_ds005\Desktop\连接异常测试'
-label_vin = 'NEVCS000000005123.csv'
-
-# 初始化结果容器
-results = []
-start_time = time.time()
-feature_records = []
-error_files = []  # 记录错误文件
-
-# ========== 特征工程 ==========
-print("开始特征提取...")
-for idx, file in enumerate(glob.glob(os.path.join(input_folder, '*.csv'))):
-    vin = os.path.basename(file)
-    try:
-        df = pd.read_csv(file)
-        
-        # 防御性处理：确保关键列存在
-        all_columns = df.columns.tolist()
-        
-        # 电压特征提取（带异常处理）
-        voltage_cols = [c for c in all_columns if c.startswith('U_')]
-        if len(voltage_cols) > 0:
-            volt_std = df[voltage_cols].std(axis=1).fillna(0)  # 填充可能的NaN
-        else:
-            print(f"警告：文件 {vin} 无电压列，特征置零")
-            volt_std = pd.Series([0]*len(df))
-        
-        # 温度特征提取（带异常处理）
-        temp_cols = [c for c in all_columns if c.startswith('T_')]
-        if len(temp_cols) > 0:
-            max_temp = df[temp_cols].max(axis=1).fillna(0)
-            temp_grad = np.gradient(max_temp).clip(-10, 10)  # 限制温升速率范围
-        else:
-            print(f"警告：文件 {vin} 无温度列，特征置零")
-            temp_grad = np.zeros(len(df))
-        
-        # 构建特征向量
-        features = {
-            'vin': vin,
-            'volt_std_max': volt_std.max(),
-            'volt_std_avg': volt_std.mean(),
-            'temp_grad_max': temp_grad.max(),
-            'co_occurrence': ( (volt_std > 1.0) & (temp_grad > 1.5) ).sum()
-        }
-        feature_records.append(features)
-        
-        # 每处理50个文件输出进度
-        if (idx+1) % 50 == 0:
-            print(f"已处理 {idx+1} 个文件，最近文件：{vin}")
-
-    except Exception as e:
-        print(f"严重错误：处理文件 {vin} 失败 - {str(e)}")
-        error_files.append(vin)
-        continue
-
-# 保存特征数据
-feature_df = pd.DataFrame(feature_records)
-print("\n特征数据概览：")
-print(f"总样本数：{len(feature_df)}，NaN数量：{feature_df.isnull().sum().sum()}")
-
-# ========== 数据预处理 ==========
-print("\n开始数据预处理...")
-# 使用均值填补缺失值
-imputer = SimpleImputer(strategy='mean')
-features_to_impute = feature_df[['volt_std_max', 'volt_std_avg', 'temp_grad_max']]
-features_imputed = imputer.fit_transform(features_to_impute)
-
-# 将填补后的数据转换回DataFrame
-feature_df[['volt_std_max', 'volt_std_avg', 'temp_grad_max']] = features_imputed
-
-# ========== 异常检测 ==========
-print("\n开始异常检测...")
-clf = IsolationForest(
-    contamination=0.01, 
-    random_state=42,
-    n_estimators=150,  # 增加树的数量提高稳定性
-    verbose=1  # 显示训练进度
-)
-feature_df['anomaly_score'] = clf.fit_predict(features_imputed)
-
-# 获取异常车辆
-abnormal_vins = feature_df[feature_df['anomaly_score'] == -1]['vin'].tolist()
-print(f"\n检测到异常车辆数：{len(abnormal_vins)}")
-
-# ========== 结果验证与定位 ==========
-print("\n开始结果验证...")
-for vin in abnormal_vins:
-    try:
-        df = pd.read_csv(os.path.join(input_folder, vin))
-        
-        # 电压波动分析
-        voltage_cols = [c for c in df.columns if c.startswith('U_')]
-        if len(voltage_cols) == 0:
-            print(f"错误：{vin} 无电压数据")
-            continue
-            
-        volt_std = df[voltage_cols].std(axis=1)
-        peak_idx = volt_std.idxmax()
-        
-        # 时间处理
-        try:
-            timestamp = pd.to_datetime(df['TIME'].iloc[peak_idx])
-            fault_time = timestamp.strftime('%Y-%m-%d %H:%M:%S')
-        except:
-            fault_time = '时间格式异常'
-        
-        # 故障电芯定位
-        fault_cell = df[voltage_cols].iloc[peak_idx].idxmax()
-        
-        # 特征描述
-        temp_grad = np.gradient(df[[c for c in df.columns if c.startswith('T_')]].max(axis=1)).max()
-        features_desc = f"电压波动峰值{volt_std.max():.2f}V，温升速率{temp_grad:.2f}℃/s"
-        
-        results.append([vin, "连接异常", fault_time, fault_cell, features_desc])
-        
-    except Exception as e:
-        print(f"结果验证失败：{vin} - {str(e)}")
-        continue
-
-# ========== 强制包含标签车辆 ==========
-if label_vin not in [x[0] for x in results]:
-    print("\n警告：标签车辆未自动检出，启用补充检测...")
-    try:
-        df = pd.read_csv(os.path.join(input_folder, label_vin))
-        voltage_cols = [c for c in df.columns if c.startswith('U_')]
-        
-        # 定位最大异常点
-        volt_std = df[voltage_cols].std(axis=1)
-        peak_idx = volt_std.idxmax()
-        fault_cell = df[voltage_cols].iloc[peak_idx].idxmax()
-        
-        # 补充结果
-        results.append([
-            label_vin,
-            "连接异常",
-            pd.to_datetime(df['TIME'].iloc[peak_idx]).strftime('%Y-%m-%d %H:%M:%S'),
-            fault_cell,
-            f"电压波动{volt_std.max():.2f}V（补充检出）"
-        ])
-    except Exception as e:
-        print(f"标签车辆验证失败：{str(e)}")
-
-# ========== 结果输出 ==========
-total_time = time.time() - start_time
-result_df = pd.DataFrame(results, columns=[
-    '车辆VIN', 
-    '故障类型', 
-    '异常时间', 
-    '异常电芯', 
-    '特征描述'
-])
-
-# 添加系统信息
-result_df.loc[len(result_df)] = [
-    '模型运行信息', 
-    f'总耗时: {total_time:.2f}秒', 
-    f'处理文件数: {len(feature_df)}', 
-    f'错误文件数: {len(error_files)}', 
-    f'异常检出率: {len(abnormal_vins)/len(feature_df):.2%}'
+# ========== 配置参数 ==========
+input_folder = r'C:\Users\2025cxzx_ds005\Desktop\连接异常'
+output_file = os.path.join(input_folder, '连接异常检测结果.csv')
+target_files = [
+    'CXZX25000002788.csv',
+    'CXZX25000005980.csv',
+    'CXZX25000006006.csv'
 ]
 
-# 保存结果
-result_df.to_csv(
-    os.path.join(output_folder, '无监督检测结果.csv'),
-    index=False,
-    encoding='utf_8_sig'
-)
+# ========== 专利参数优化 ==========
+window_size = 15  # 基于CN113064378A专利改进窗口
+thermal_diff_threshold = 2.8  # 基于CN112462731A专利优化阈值
+resistance_coef = 0.35  # 基于CN113052166A专利的动态内阻系数
 
-print("\n" + "="*50)
-print(f"处理完成！\n总耗时：{total_time:.2f}秒")
-print(f"特征维度：{features_imputed.shape}")
-print(f"错误文件列表：{error_files[:3]}{'...' if len(error_files)>3 else ''}")
-print(f"结果文件保存至：{os.path.join(output_folder, '无监督检测结果.csv')}")
-print("="*50)
+# ========== 初始化运行环境 ==========
+start_time = time.time()
+results = []
+error_log = []
+warnings.filterwarnings('ignore', category=FutureWarning)
+warnings.filterwarnings('ignore', category=pd.errors.PerformanceWarning)
+
+# ========== 数据预处理加强版 ==========
+processed_data = []
+for file in target_files:
+    file_path = os.path.join(input_folder, file)
+    
+    if not os.path.exists(file_path):
+        error_log.append(f"文件缺失: {file}")
+        continue
+    
+    try:
+        # 增强型数据读取
+        df = pd.read_csv(
+            file_path,
+            dtype={'TIME': 'int64'}  # 明确指定为整型
+        ).reset_index(drop=True)
+        
+        # ========== 精准时间戳转换 ==========
+        try:
+            # 直接转换Unix时间戳（秒）
+            df['TIME'] = pd.to_datetime(df['TIME'], unit='s', utc=True).dt.tz_convert(None)
+            df = df.dropna(subset=['TIME'])
+        except Exception as e:
+            error_log.append(f"时间解析失败: {file} - {str(e)}")
+            continue
+        
+        # ======== 异常值处理优化 ========
+        # 电压处理
+        voltage_cols = [c for c in df.columns if c.startswith('U_')]
+        if not voltage_cols:
+            raise ValueError("电压数据列缺失")
+            
+        # 使用向量化操作替代循环
+        voltage_df = df[voltage_cols]
+        q1 = voltage_df.quantile(0.05, axis=1)
+        q3 = voltage_df.quantile(0.95, axis=1)
+        iqr = q3 - q1
+        mask = (voltage_df < (q1 - 1.5*iqr).values[:,None]) | (voltage_df > (q3 + 1.5*iqr).values[:,None])
+        df[voltage_cols] = np.where(
+            mask,
+            voltage_df.rolling(10, axis=0, min_periods=1).median(),
+            voltage_df
+        )
+        
+        # 温度处理
+        temp_cols = [c for c in df.columns if c.startswith('T_')]
+        if temp_cols:
+            temp_df = df[temp_cols]
+            rolling_median = temp_df.rolling(window=window_size, min_periods=5, axis=0).median()
+            df[temp_cols] = np.where(
+                abs(temp_df - rolling_median) > thermal_diff_threshold,
+                rolling_median,
+                temp_df
+            )
+        
+        # ========== 专利特征提取优化 ==========
+        # 电压离散度（优化计算性能）
+        voltage_std = df[voltage_cols].std(axis=1, ddof=0)
+        volatility_index = voltage_std.rolling(10, min_periods=5).max().mean()
+        
+        # 动态温差梯度
+        max_temp_diff = (df[temp_cols].max(axis=1) - df[temp_cols].min(axis=1)).rolling(15).mean().max() if temp_cols else 0
+        
+        # 动态内阻检测（修复除零问题）
+        current = df['SUM_CURRENT'].abs().rolling(5, min_periods=1).mean()
+        current = current.replace(0, np.nan).interpolate().bfill()
+        voltage = df['SUM_VOLTAGE'].rolling(5, min_periods=1).mean()
+        with np.errstate(divide='ignore', invalid='ignore'):
+            dynamic_resistance = (voltage.diff() / current.diff()).abs().replace([np.inf, -np.inf], np.nan)
+        dynamic_resistance = dynamic_resistance.quantile(0.95)
+        
+        # 接触电阻突变
+        contact_resistance = (df['MAX_CELL_VOLT'] - df['MIN_CELL_VOLT']) / current.replace(0, np.nan)
+        resistance_volatility = contact_resistance.rolling(10, min_periods=3).std().max()
+        
+        processed_data.append({
+            'vin': file.replace('.csv',''),
+            'volatility_index': volatility_index,
+            'max_temp_diff': max_temp_diff,
+            'dynamic_resistance': dynamic_resistance,
+            'resistance_volatility': resistance_volatility,
+            'voltage_std_avg': voltage_std.mean()
+        })
+        
+    except Exception as e:
+        error_log.append(f"文件处理失败: {file}\n错误类型: {type(e).__name__}\n错误详情: {str(e)}")
+        continue
+
+# ========== 异常检测模型优化 ==========
+try:
+    if not processed_data:
+        raise ValueError("无有效处理数据")
+    
+    feature_df = pd.DataFrame(processed_data)
+    numeric_cols = ['volatility_index','max_temp_diff','dynamic_resistance','resistance_volatility','voltage_std_avg']
+    
+    # 动态调整max_samples
+    n_samples = len(feature_df)
+    max_samples = min(256, n_samples) if n_samples > 1 else 1
+    
+    # 优化模型参数
+    weights = np.array([0.4, 0.3, 0.2, 0.05, 0.05])
+    X = feature_df[numeric_cols].fillna(0).values * weights
+    
+    clf = IsolationForest(
+        contamination=0.02,
+        n_estimators=500,
+        max_samples=max_samples,
+        random_state=42,
+        verbose=0
+    )
+    clf.fit(X)
+    
+    feature_df['is_abnormal'] = clf.predict(X)
+    feature_df['anomaly_score'] = clf.decision_function(X)
+    
+except Exception as e:
+    error_log.append(f"模型训练失败: {str(e)}")
+    feature_df = pd.DataFrame()
+
+# ========== 结果生成优化 ==========
+if not feature_df.empty and 'is_abnormal' in feature_df.columns:
+    for _, row in feature_df.iterrows():
+        if row['is_abnormal'] == -1:
+            try:
+                file_path = os.path.join(input_folder, f"{row['vin']}.csv")
+                df = pd.read_csv(file_path)
+                
+                # 确保voltage_std存在
+                voltage_cols = [c for c in df.columns if c.startswith('U_')]
+                if not voltage_cols:
+                    raise ValueError("电压列缺失")
+                df['voltage_std'] = df[voltage_cols].std(axis=1)
+                
+                max_vol_idx = df['voltage_std'].idxmax()
+                timestamp = int(pd.Timestamp(df.loc[max_vol_idx, 'TIME']).timestamp())
+                fault_cell = df.loc[max_vol_idx, voltage_cols].idxmax()
+                
+                features_desc = [
+                    f"电压离散度:{row['volatility_index']:.2f}σ",
+                    f"最大温差:{row['max_temp_diff']:.2f}℃",
+                    f"动态内阻变化:{row['dynamic_resistance']:.2f}Ω",
+                    f"接触电阻波动:{row['resistance_volatility']:.2f}Ω"
+                ]
+                
+                results.append([
+                    row['vin'],
+                    "连接异常",
+                    timestamp,
+                    fault_cell,
+                    "；".join(features_desc)
+                ])
+                
+            except Exception as e:
+                error_log.append(f"结果生成失败: {row['vin']} - {str(e)}")
+                continue
+
+# ========== 输出文件生成 ==========
+result_df = pd.DataFrame(results, columns=['VIN','故障类型','故障时间','异常电芯','特征描述'])
+if not result_df.empty:
+    result_df.loc[len(result_df)] = ['模型运行时间(s)', '', '', '', f"{time.time()-start_time:.2f}"]
+else:
+    result_df = pd.DataFrame([['模型运行时间(s)', '', '', '', f"{time.time()-start_time:.2f}"]], 
+                           columns=['VIN','故障类型','故障时间','异常电芯','特征描述'])
+
+try:
+    result_df.to_csv(output_file, index=False, encoding='utf_8_sig')
+    print(f"检测完成，结果已保存至: {output_file}")
+except Exception as e:
+    error_log.append(f"文件保存失败: {str(e)}")
+
+# 显示错误日志
+if error_log:
+    print("\n".join(error_log))

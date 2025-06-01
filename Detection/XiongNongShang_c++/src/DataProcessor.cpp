@@ -95,9 +95,12 @@ void DataProcessor::processAllFiles() {
 
 // 修改后的 processSingleFile 函数
 void DataProcessor::processSingleFile(const fs::path& filePath) {
+    headers.clear();
+    foundHeader = false;
+    timestamps.clear();
     abnormalCounts.clear();
     abnormalColumnsPerWindow.clear();
-
+    
     std::setlocale(LC_ALL, "C");
     logProgress("开始处理文件: " + filePath.filename().string());
     std::cout << "\n==== 开始处理文件: " << filePath.filename() << " ====" << std::endl;
@@ -105,33 +108,114 @@ void DataProcessor::processSingleFile(const fs::path& filePath) {
     Eigen::MatrixXd rawData;
     std::vector<double> buffer;
     std::ifstream file(filePath);
+    // === 新增编码处理 ===
+    try {
+        file.imbue(std::locale("en_US.UTF-8"));
+    } catch (const std::exception& e) {
+        logProgress("UTF-8 区域设置不可用: " + std::string(e.what()));
+    }
+
+    // 处理UTF-8 BOM头
+    const unsigned char bom[] = {0xEF, 0xBB, 0xBF};
+    char header[3] = {0};
+    file.read(header, 3);
+    if (header[0] != bom[0] || header[1] != bom[1] || header[2] != bom[2]) {
+        file.seekg(0); // 无BOM则重置位置
+    }
+    // ===================
     std::string line;
 
-    // 1. 读取标题行
-    std::getline(file, line);
-    std::vector<std::string> headers;
-    std::stringstream headerStream(line);
-    std::string header;
-    while (std::getline(headerStream, header, ',')) {
-        headers.push_back(header);
+    // === 新增分隔符检测逻辑 ===
+    char detectedDelimiter = ',';
+    std::vector<char> possibleDelimiters = {',', '\t', ' ', ';'};
+    bool delimiterDetected = false;
+
+    // 读取第一行用于检测分隔符
+    if (std::getline(file, line)) {
+        for (char delim : possibleDelimiters) {
+            std::stringstream testStream(line);
+            std::vector<std::string> testColumns;
+            std::string testCol;
+            while (std::getline(testStream, testCol, delim)) {
+                if (!testCol.empty()) testColumns.push_back(testCol);
+            }
+        
+            // 如果找到合理数量的列
+            if (testColumns.size() >= colNames.size()) {
+                detectedDelimiter = delim;
+                delimiterDetected = true;
+                logProgress("检测到分隔符: " + std::string(1, delim));
+                break;
+            }
+        }
     }
+
+    // 重置文件指针
+    file.clear();
+    file.seekg(0);
+    // ========================
+
+    // 现在开始智能查找列名行
+    bool foundHeader = false;
+
+    for (int i = 0; i < MAX_HEADER_SEARCH_LINES; ++i) {
+        if (!std::getline(file, line)) break;
+        
+        std::stringstream testStream(line);
+        std::vector<std::string> testColumns;
+        std::string testCol;
+        
+        // 提取并清理当前行的所有列名
+        while (std::getline(testStream, testCol, ',')) {
+            // 新增：去除前后空格和引号
+            testCol.erase(0, testCol.find_first_not_of(" \t\n\r\""));  // 去除前导空格和引号
+            testCol.erase(testCol.find_last_not_of(" \t\n\r\"") + 1);  // 去除尾部空格和引号
+            testColumns.push_back(testCol);
+        }
+    
+        // 检查是否包含所有目标列（原有逻辑保持不变）
+        bool allFound = true;
+        for (const auto& target : colNames) {
+            if (std::find(testColumns.begin(), testColumns.end(), target) == testColumns.end()) {
+                allFound = false;
+                break;
+            }
+        }
+        
+        if (allFound && (testColumns.size() >= colNames.size())) {
+            headers = testColumns;
+            foundHeader = true;
+            logProgress("在行 " + std::to_string(i+1) + " 找到列名");
+            break;
+        }
+    }
+
+    // 1. 读取标题行
+    // std::getline(file, line);
+    // std::vector<std::string> headers;
+    // std::stringstream headerStream(line);
+    // std::string header;
+    // while (std::getline(headerStream, header, ',')) {
+    //     headers.push_back(header);
+    // }
 
     // 2. 匹配有效列索引
     matchColumnIndices(headers);
-
+    
     // 3. 读取数据行
     size_t rows = 0;
     const size_t validColumns = validColumnIndices.size();
 
     while (std::getline(file, line)) {
-        if (line.empty() || line[0] == '#') continue;
-
         std::stringstream ss(line);
-        std::string value;
         std::vector<std::string> rowData;
-
-        // 解析当前行所有列
-        while (std::getline(ss, value, ',')) {
+        std::string value;
+        
+        // === 使用检测到的分隔符 ===
+        while (std::getline(ss, value, detectedDelimiter)) {
+            // 清理值
+            value.erase(0, value.find_first_not_of(" \t\n\r\""));
+            value.erase(value.find_last_not_of(" \t\n\r\"") + 1);
             rowData.push_back(value);
         }
 

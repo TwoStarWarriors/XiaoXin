@@ -1,0 +1,92 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build-Debug-MSVC",
+            "type": "shell",
+            "command": "cl.exe",
+            "args": [
+                "/Zi",
+                "/EHsc",
+                "/I",
+                "${workspaceFolder}/3rdparty/python_env/include",
+                // "/I",
+                // "${workspaceFolder}/3rdparty/opencv/include",
+                "/I",
+                "D:/LenovoSoftstore/Install/Microsoft_Visual_Studio/2019_C++Tools/VC/Tools/MSVC/14.29.30133/include",
+                "/Fe:${workspaceFolder}/x64/Debug/CppCallPython.exe",
+                "${workspaceFolder}/CppCallPython/main.cpp",
+                "/link",
+                "/LIBPATH:D:/LenovoSoftstore/Install/Microsoft_Visual_Studio/2019_C++Tools/VC/Tools/MSVC/14.29.30133/lib/x64",
+                "/LIBPATH:${workspaceFolder}/3rdparty/python_env/libs",
+                // "/LIBPATH:${workspaceFolder}/3rdparty/opencv/x64/vc15/lib",
+                "python312.lib",
+                // "opencv_world3410d.lib",
+                "/SUBSYSTEM:CONSOLE",
+                "/MACHINE:x64",
+                "/DEBUG:NONE"
+            ],
+            "group": "build",
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "options": {
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": [
+                        "/C",
+                        "call",
+                        "D:/LenovoSoftstore/Install/Microsoft_Visual_Studio/2019_C++Tools/Common7/Tools/VsDevCmd.bat",
+                        "-arch=x64",
+                        "&&"
+                    ]
+                }
+            }
+        },
+        {
+            "label": "Build-Release-MSVC",
+            "type": "shell",
+            "command": "cl.exe",
+            "args": [
+                "/O2",
+                "/EHsc",
+                "/I",//搜索main.cpp目录外的头文件
+                "${workspaceFolder}/3rdparty/python_env/include",
+                // "/I",
+                // "${workspaceFolder}/3rdparty/opencv/include",
+                "/I",
+                "D:/LenovoSoftstore/Install/Microsoft_Visual_Studio/2019_C++Tools/VC/Tools/MSVC/14.29.30133/include",
+                "/Fe:${workspaceFolder}/x64/Release/CppCallPython.exe",//重命名的exe
+                "${workspaceFolder}/CppCallPython/main.cpp",
+                "/link",
+                "/LIBPATH:D:/LenovoSoftstore/Install/Microsoft_Visual_Studio/2019_C++Tools/VC/Tools/MSVC/14.29.30133/lib/x64",
+                "/LIBPATH:${workspaceFolder}/3rdparty/python_env/libs",
+                // "/LIBPATH:${workspaceFolder}/3rdparty/opencv/x64/vc15/lib",
+                "python312.lib",
+                // "opencv_world3410.lib",
+                "/SUBSYSTEM:CONSOLE",
+                "/MACHINE:x64",
+                "/DEBUG:NONE"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "options": {
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": [
+                        "/C",
+                        "call",
+                        "D:/LenovoSoftstore/Install/Microsoft_Visual_Studio/2019_C++Tools/Common7/Tools/VsDevCmd.bat",
+                        "-arch=x64",
+                        "&&"
+                    ]
+                }
+            }
+        }
+    ]
+}

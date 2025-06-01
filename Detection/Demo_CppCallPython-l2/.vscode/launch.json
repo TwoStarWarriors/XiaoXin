@@ -1,0 +1,47 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug-MSVC",
+            "type": "cppvsdbg", // MSVC 调试器类型
+            "request": "launch",
+            "program": "${workspaceFolder}/x64/Debug/CppCallPython.exe",
+            "args": ["-c", "../../config.json"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/x64/Debug",
+            "environment": [
+                {
+                    "name": "PATH",
+                    "value": "${env:PATH};${workspaceFolder}/x64/Release/processData_env/Library/bin;D:/LenovoSoftstore/Install/Microsoft_Visual_Studio/2019_C++Tools/VC/Redist/MSVC/14.29.30133/x64/Microsoft.VC142.CRT;${workspaceFolder}/3rdparty/opencv/x64/vc15/bin"
+                }
+                // {
+                //     "name": "PYTHONPATH",
+                //     "value": "C:/Users/86158/Desktop/Demo_CppCallPython-l2/3rdparty/python_env/Lib/site-packages"
+                // }
+            ],
+            "console": "externalTerminal", 
+            "preLaunchTask": "Build-Debug-MSVC"
+        },
+        {
+            "name": "Release-MSVC",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/x64/Release/CppCallPython.exe",
+            "args": ["-c", "../../config.json"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/x64/Release",
+            "environment": [
+                {
+                    "name": "PATH",
+                    "value": "${env:PATH};${workspaceFolder}/x64/Release/processData_env/Library/bin;D:/LenovoSoftstore/Install/Microsoft_Visual_Studio/2019_C++Tools/VC/Redist/MSVC/14.29.30133/x64/Microsoft.VC142.CRT;${workspaceFolder}/3rdparty/opencv/x64/vc15/bin"
+                }
+                // {
+                //     "name": "PYTHONPATH",
+                //     "value": "C:/Users/86158/Desktop/Demo_CppCallPython-l2/3rdparty/python_env/Lib/site-packages"
+                // }
+            ],
+            "console": "externalTerminal", 
+            "preLaunchTask": "Build-Release-MSVC"
+        }
+    ]
+}
