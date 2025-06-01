@@ -34,7 +34,7 @@ Algorithm::Algorithm()
     PyConfig_InitPythonConfig(&config);
 
     // 设置 PythonHome 为虚拟环境路径
-    config.home = Py_DecodeLocale("C:/Users/86158/Desktop/Demo_CppCallPython-l2/x64/Release/processData_env", nullptr);
+    config.home = Py_DecodeLocale("D:/wenjian/GitHub/XiaoXin/Detection/Demo_CppCallPython-l2/x64/Release/processData_env", nullptr);
     // 检查路径是否解析成功
     if (config.home == nullptr) {
         fprintf(stderr, "[ERROR] 无法解析 PythonHome 路径！\n");
@@ -44,13 +44,13 @@ Algorithm::Algorithm()
     // 添加模块搜索路径
     config.module_search_paths_set = 1;
     PyWideStringList_Append(&config.module_search_paths, 
-        L"C:/Users/86158/Desktop/Demo_CppCallPython-l2/x64/Release");  // 当前目录，用于导入AlgorithmXXX.py
+        L"D:/wenjian/GitHub/XiaoXin/Detection/Demo_CppCallPython-l2/x64/Release");  // 当前目录，用于导入AlgorithmXXX.py
     PyWideStringList_Append(&config.module_search_paths, 
-        L"C:/Users/86158/Desktop/Demo_CppCallPython-l2/x64/Release/processData_env/Lib");       // 标准库路径
+        L"D:/wenjian/GitHub/XiaoXin/Detection/Demo_CppCallPython-l2/x64/Release/processData_env/Lib");       // 标准库路径
     PyWideStringList_Append(&config.module_search_paths, 
-        L"C:/Users/86158/Desktop/Demo_CppCallPython-l2/x64/Release/processData_env/Lib/site-packages"); // 第三方库路径
+        L"D:/wenjian/GitHub/XiaoXin/Detection/Demo_CppCallPython-l2/x64/Release/processData_env/Lib/site-packages"); // 第三方库路径
     PyWideStringList_Append(&config.module_search_paths, 
-        L"C:/Users/86158/Desktop/Demo_CppCallPython-l2/x64/Release/processData_env/DLLs"); 
+        L"D:/wenjian/GitHub/XiaoXin/Detection/Demo_CppCallPython-l2/x64/Release/processData_env/DLLs"); 
          
     // 初始化 Python
     status = Py_InitializeFromConfig(&config);
@@ -130,9 +130,9 @@ int main(int argc, char** argv) {
     Algorithm* algorithm = new Algorithm;
     
     // 数据处理调用
-    std::string data_file = "C:/Users/86158/Desktop/Demo_CppCallPython-l2/x64/Release/processData/data_input/gongkuang2_cycle_4.csv";
-    std::string mose_dir = "C:/Users/86158/Desktop/Demo_CppCallPython-l2/x64/Release/processData/mose_output";
-    std::string ac_dir = "C:/Users/86158/Desktop/Demo_CppCallPython-l2/x64/Release/processData/ac_output";
+    std::string data_file = "D:/wenjian/GitHub/XiaoXin/Detection/Demo_CppCallPython-l2/x64/Release/processData/data_input/gongkuang2_cycle_4.csv";
+    std::string mose_dir = "D:/wenjian/GitHub/XiaoXin/Detection/Demo_CppCallPython-l2/x64/Release/processData/mose_output";
+    std::string ac_dir = "D:/wenjian/GitHub/XiaoXin/Detection/Demo_CppCallPython-l2/x64/Release/processData/ac_output";
     algorithm->processData(data_file, mose_dir, ac_dir);
 
     delete algorithm;

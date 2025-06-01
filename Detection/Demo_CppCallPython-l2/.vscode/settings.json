@@ -100,9 +100,9 @@
       "xtree": "cpp",
       "xutility": "cpp"
     },
-    "python.pythonPath": "C:/Users/86158/Desktop/Demo_CppCallPython-l2/x64/Release/processData_env/python.exe",
+    "python.pythonPath": "${workspaceFolder}/x64/Release/processData_env/python.exe",
     "python.analysis.extraPaths": [
-        "C:/Users/86158/Desktop/Demo_CppCallPython-l2/x64/Release/processData_env/Lib/site-packages"
+        "${workspaceFolder}/x64/Release/processData_env/Lib/site-packages"
     ]
 
 }

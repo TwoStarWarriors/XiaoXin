@@ -9,22 +9,22 @@
 ③ 选择 x64/Release（debug没有配置） 能够直接运行
 ~~~
 
-### 环境变量配置
+### 环境变量配置//绝对路径！！！
 ~~~
 
-C:\Users\86158\Desktop\Demo_CppCallPython-l2\3rdparty\python_env\libs
+D:\wenjian\GitHub\XiaoXin\Detection\Demo_CppCallPython-l2\3rdparty\python_env\libs
 
-C:\Users\86158\Desktop\Demo_CppCallPython-l2\3rdparty\python_env\bin
+D:\wenjian\GitHub\XiaoXin\Detection\Demo_CppCallPython-l2\3rdparty\python_env\bin
 
-C:\Users\86158\Desktop\Demo_CppCallPython-l2\3rdparty\python_env\include
+D:\wenjian\GitHub\XiaoXin\Detection\Demo_CppCallPython-l2\3rdparty\python_env\include
 
-C:\Users\86158\Desktop\Demo_CppCallPython-l2\x64\Release\processData_env\Library\bin
+D:\wenjian\GitHub\XiaoXin\Detection\Demo_CppCallPython-l2\x64\Release\processData_env\Library\bin
 
-C:\Users\86158\Desktop\Demo_CppCallPython-l2\x64\Release\processData_env\Lib\site-packages
+D:\wenjian\GitHub\XiaoXin\Detection\Demo_CppCallPython-l2\x64\Release\processData_env\Lib\site-packages
 
-C:\Users\86158\Desktop\Demo_CppCallPython-l2\x64\Release\processData_env\Library\lib
+D:\wenjian\GitHub\XiaoXin\Detection\Demo_CppCallPython-l2\x64\Release\processData_env\Library\lib
 
-C:\Users\86158\Desktop\Demo_CppCallPython-l2\x64\Release\processData_env\Lib
+D:\wenjian\GitHub\XiaoXin\Detection\Demo_CppCallPython-l2\x64\Release\processData_env\Lib
 
 ~~~
 
