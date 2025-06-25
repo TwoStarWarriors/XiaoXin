@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from ctypes import *
+from ctypes import * # *全导进来
 import os
 import sys
 # os.chdir(os.path.abspath(os.path.dirname(__file__)))
@@ -50,13 +50,13 @@ SEND_SINGLE = 1
 SELF_SEND_RECV = 2
 SELF_SEND_RECV_SINGLE = 3
 class VCI_INIT_CONFIG(Structure):
-    _fields_ = [("AccCode", c_ulong),
-                ("AccMask", c_ulong),
-                ("Reserved", c_ulong),
-                ("Filter", c_ubyte),
-                ("Timing0", c_ubyte),
-                ("Timing1", c_ubyte),
-                ("Mode", c_ubyte)
+    _fields_ = [("AccCode", c_ulong),  # 滤波的接受码，设置为0
+                ("AccMask", c_ulong),  # 滤波的屏蔽码，设置为0xFFFFFFFF
+                ("Reserved", c_ulong), # 保留字段，无意义
+                ("Filter", c_ubyte),   # 滤波使能：0（不过滤）、1（过滤）c_ubyte有符号，±区分
+                ("Timing0", c_ubyte),  # 波特率的定时器0：对应 xx kbps的定时器的值为0xXX
+                ("Timing1", c_ubyte),  # 波特率的定时器1：对应 xx kbps的定时器的值为0xXX
+                ("Mode", c_ubyte)      # can工作模式
                 ]
 
 
