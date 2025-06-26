@@ -2,7 +2,12 @@
 from ctypes import * # *全导进来
 import os
 import sys
+from ctypes import c_ubyte, Structure
 # os.chdir(os.path.abspath(os.path.dirname(__file__)))
+
+# 添加 ubyte_3array 定义
+class ubyte_3array(Structure):
+    _fields_ = [("PassiveErrData", c_ubyte * 3)]
 
 enbaleOfflineTest = False  # 启用自动生成测试报文数据
 platformInfo = sys.version
@@ -50,6 +55,7 @@ SEND_SINGLE = 1
 SELF_SEND_RECV = 2
 SELF_SEND_RECV_SINGLE = 3
 class VCI_INIT_CONFIG(Structure):
+    """代表“初始化配置”信息的类"""
     _fields_ = [("AccCode", c_ulong),  # 滤波的接受码，设置为0
                 ("AccMask", c_ulong),  # 滤波的屏蔽码，设置为0xFFFFFFFF
                 ("Reserved", c_ulong), # 保留字段，无意义
@@ -221,7 +227,7 @@ def sendMessage( can_id: int, can_data: list):
     else:
         # print('send ok')
         pass
-def readErrInfo():
+def readErrInfo(self):
     global ZLGCAN
     errInfo = PVCI_ERR_INFO(0, ubyte_3array(0, 0, 0), 0)
     ZLGCAN.VCI_ReadErrInfo(self.canType, self.canIndex,
